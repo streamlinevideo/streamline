@@ -252,7 +252,7 @@ Now go ahead and clone this respository to get the build ...
 
 At some point this will pop up. Just hit enter. 
 
-	![grub](https://s3-us-west-1.amazonaws.com/streamlinevideo/grub.png)
+![grub](https://s3-us-west-1.amazonaws.com/streamlinevideo/grub.png)
 
 After the script is done, you will want to go ahead and download your caddy server. Go to caddyserver.com/download and choose the “Platform” to be “Linux 64-bit” and add the plugins http.cors and http.upload. I’m going to assume that you are using this all for personal use, so please go ahead and select the personal license. If you are using this for Commercial stuff (please go ahead and use the commercial license workflow.) If you want to use server that is free for commercial use, but slightly harder to configure, but has no cost, please check out NGINX or Apache. You will need to Google how to allow HTTP PUT uploads. Caddy is nice because it’s so simple, and, if you need, it does HTTPS configuration for you super quickly.
 
