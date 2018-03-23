@@ -190,7 +190,7 @@ You should see that it detected the resolution and frame rate of your incoming v
 
 Next go ahead and open Media Express (also installed with the Black Magic software). Click on "Log and Capture", and see if you see your video. Close this window. You must close this if you intend to stream, you cannot have two pieces of software using the capture card at the same time.
 
-![Desktop Video Input](https://s3-us-west-1.amazonaws.com/streamlinevideo/enc3.png)
+![Desktop Video Input](https://s3-us-west-1.amazonaws.com/streamlinevideo/desktopvideoinput.png)
 
 ## Building the origin server
 
