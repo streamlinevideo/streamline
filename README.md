@@ -47,7 +47,7 @@ We have not tried to address all possible hardware or trying to co-exist with a 
 
 ## Parts of the system
 
-![signal flow](https://s3-us-west-2.amazonaws.com/hellavision/signalflow2.png)
+![signal flow](https://s3-us-west-1.amazonaws.com/streamlinevideo/signalflow2.png)
 
 **Source -** Camera with HDMI or HD-SDI output. (it could be a video switcher or a matrix router in a larger production.) We will be taking in raw video from a camera or some video production system. It will be a raw, uncompressed, full quality video source. HDMI and HD-SDI are two different standards for how you can connect raw video between devices. Our goal here is to take this source and compress it and deliver it across the internet, yet, try to make it look as close as possible to this original “golden master” source.
 
@@ -178,19 +178,19 @@ Let it sit and finish everything until it tells you to reboot, then do so. Simpl
 
 Once you’re rebooted and back at the desktop, open up the BlackMagic Desktop Video software, which was installed by the build script. If this is your first time using a brand new Black Magic capture card, you may need to update it's firmware. This can be done with the application "Blackmagic Firmware Updater." Do that before proceeding.
 
-![Desktop Video](https://s3-us-west-2.amazonaws.com/hellavision/enc1.png)
+![Desktop Video](https://s3-us-west-1.amazonaws.com/streamlinevideo/enc1.png)
 
 Select HDMI or HD-SDI, whichever you will be using to ingest your raw video. Now plug in your video source. This is the HDMI or HD-SDI from your camera. The default is HD-SDI. You will need to select the video input manually if you want to use HDMI.
 
-![Desktop Video Input](https://s3-us-west-2.amazonaws.com/hellavision/enc2.png)
+![Desktop Video Input](https://s3-us-west-1.amazonaws.com/streamlinevideo/enc2.png)
 
 You should see that it detected the resolution and frame rate of your incoming video if you have the right input selected and everything is working correctly.
 
-![Video Input](https://s3-us-west-2.amazonaws.com/hellavision/videoinput.png)
+![Video Input](https://s3-us-west-1.amazonaws.com/streamlinevideo/videoinput.png)
 
 Next go ahead and open Media Express (also installed with the Black Magic software). Click on "Log and Capture", and see if you see your video. Close this window. You must close this if you intend to stream, you cannot have two pieces of software using the capture card at the same time.
 
-![Desktop Video Input](https://s3-us-west-2.amazonaws.com/hellavision/enc3.png)
+![Desktop Video Input](https://s3-us-west-1.amazonaws.com/streamlinevideo/enc3.png)
 
 ## Building the origin server
 
@@ -198,41 +198,41 @@ To proceed you will need an Amazon Web Services account.
 
 Once you’ve made one, go to the EC2 console. Click on the region on the top right that is nearest to you. 
 
-![region](https://s3-us-west-2.amazonaws.com/hellavision/image1.png)
+![region](https://s3-us-west-1.amazonaws.com/streamlinevideo/image1.png)
 
 Now hit the blue "Launch Instance" button. 
 
-![launch](https://s3-us-west-2.amazonaws.com/hellavision/launchinstace.png)
+![launch](https://s3-us-west-1.amazonaws.com/streamlinevideo/launchinstace.png)
 
 On the "Choose AMI" screen, please select Ubuntu 16.04 by hitting the blue "Select" button next to it. 
 
-![ubuntu](https://s3-us-west-2.amazonaws.com/hellavision/oregonselect.png)
+![ubuntu](https://s3-us-west-1.amazonaws.com/streamlinevideo/oregonselect.png)
 
 Now select your instance type. This is how fast your instance is and its resources. I’m going to choose a m4.xlarge for the sake of my personal testing. It’s a quad core instance with pretty good network throughput. In a Northern California data center, at the time of writing this, it’s $0.2 per Hour. That’s about 5 bucks a day. You can find AWS instance pricing [here](https://aws.amazon.com/ec2/pricing/on-demand). The larger your origin server, the more edge servers can pull from your origin at the same time before overwhelming it. Small streams can use small origins. Large streams will need bigger ones. It's actually somewhat difficult to predict the capacity you will need, so I'd recommend only using larger instance types for the duration of large events. Don't forget to watch your AWS bill, this can add up fast and sometimes can be wrong! Keep a close eye on how much you're getting charged. After you've clicked on m4.2xlarge (or whatever you choose) click "Next: Configure Instance Details"
 
-![instance type](https://s3-us-west-2.amazonaws.com/hellavision/instancetype.png)
+![instance type](https://s3-us-west-1.amazonaws.com/streamlinevideo/instancetype.png)
 
 Now hit on the upper right "6. Configure Security Group" From here you can enable port 80 to the world, this is the port from which our CDN will be pulling our HTTP streams. Hit “Add Rule” then make a make the type "HTTP" to port open on 80 from the source of “Anywhere.” Then hit "Review and Launch" on the lower right hand corner.
 
-![network acls](https://s3-us-west-2.amazonaws.com/hellavision/acls.png)
+![network acls](https://s3-us-west-1.amazonaws.com/streamlinevideo/acls.png)
 
-On the next screen where it says "Step 7: Review Instance Launch" go ahead and hit the blue "Launch" butotn on the lower right.
+On the next screen where it says "Step 7: Review Instance Launch" go ahead and hit the blue "Launch" button on the lower right.
 
-![review](https://s3-us-west-2.amazonaws.com/hellavision/review2.png)
+![review](https://s3-us-west-1.amazonaws.com/streamlinevideo/review2.png)
 
 Next a dialogue will ask you to “Select an existing key pair or create a new key pair.” You will want to “Create a new key pair” and name it. I’ll call it “myawesomekey.” Hit "Download Key Pair" to download the key. 
 
-![key](https://s3-us-west-2.amazonaws.com/hellavision/key2.png)
+![key](https://s3-us-west-1.amazonaws.com/streamlinevideo/key2.png)
 
 Now hit the blue "Launch Instances" button. Now hit “view instances”.
 
 You will notice the name of your instance is blank on this screen. Hover over the blank area and click on the edit pencil and give your instance a name. I’ll call it “streamlineorigin.”
 
-![view instances](https://s3-us-west-2.amazonaws.com/hellavision/8.png)
+![view instances](https://s3-us-west-1.amazonaws.com/streamlinevideo/streamlineorigin.png)
 
 Now we will want to click on “Connect” up near the launch instance button. This will show you how to SSH (remotely connect to the command line shell of the remote server.) This step is different based on your personal operating system. There is a link to directions on this screen for how to connect via Windows if you hit “connect using PuTTY”. 
 
-![connect](https://s3-us-west-2.amazonaws.com/hellavision/9.png)
+![connect](https://s3-us-west-1.amazonaws.com/streamlinevideo/9.png)
 
 On Linux or MacOS, simply find where you downloaded your key, and move it to your ~/.ssh directory, and then change it’s permissions to be correct. That would be in your terminal (asuming you're in the folder it was downloaded to)...
 
@@ -250,7 +250,11 @@ Now go ahead and clone this respository to get the build ...
 
 	git clone https://github.com/colleenkhenry/streamline.git && cd ~/streamline && ./buildServer.sh
 
-You will want to go ahead and download your caddy server. Go to caddyserver.com/download and choose the “Platform” to be “Linux 64-bit” and add the plugins http.cors and http.upload. I’m going to assume that you are using this all for personal use, so please go ahead and select the personal license. If you are using this for Commercial stuff (please go ahead and use the commercial license workflow.) If you want to use server that is free for commercial use, but slightly harder to configure, but has no cost, please check out NGINX or Apache. You will need to Google how to allow HTTP PUT uploads. Caddy is nice because it’s so simple, and, if you need, it does HTTPS configuration for you super quickly.
+At some point this will pop up. Just hit enter. 
+
+![grub](https://s3-us-west-1.amazonaws.com/streamlinevideo/grub.png)
+
+After the script is done, you will want to go ahead and download your caddy server. Go to caddyserver.com/download and choose the “Platform” to be “Linux 64-bit” and add the plugins http.cors and http.upload. I’m going to assume that you are using this all for personal use, so please go ahead and select the personal license. If you are using this for Commercial stuff (please go ahead and use the commercial license workflow.) If you want to use server that is free for commercial use, but slightly harder to configure, but has no cost, please check out NGINX or Apache. You will need to Google how to allow HTTP PUT uploads. Caddy is nice because it’s so simple, and, if you need, it does HTTPS configuration for you super quickly.
 
 After you’ve selected your options, copy the “One-step installer script (bash):” command line into your terminal where you are SSHed into your server. This will look like.
 
@@ -266,31 +270,31 @@ Your origin server is now running.
 
 Go to https://console.aws.amazon.com/cloudfront/home
 
-![CloudFront Getting Started](https://s3-us-west-2.amazonaws.com/hellavision/image10.png)
+![CloudFront Getting Started](https://s3-us-west-1.amazonaws.com/streamlinevideo/image10.png)
 
 Click “Create Distribution”
 
 Then click under Web “Get Started”
 
-![get started](https://s3-us-west-2.amazonaws.com/hellavision/image6.png)
+![get started](https://s3-us-west-1.amazonaws.com/streamlinevideo/image6.png)
 
 Under origin domain name, put the URL of your origin server. Earlier my exmaple was “ec2-54-183-60-162.us-west-1.compute.amazonaws.com” You will also want to enable CORS to work on any domain (or your specific one), if you want to embed this on a third party website. To do that add a header under "Header Name" called "Access-Control-Allow-Origin" and give it a value of "*".
 
-![Create Distribution 0](https://s3-us-west-2.amazonaws.com/hellavision/createdistribution0.png)
+![Create Distribution 0](https://s3-us-west-1.amazonaws.com/streamlinevideo/createdistribution0.png)
 
 Then scroll all the way down...
 
-![Create Distribution 1](https://s3-us-west-2.amazonaws.com/hellavision/createdistribution1.png)
+![Create Distribution 1](https://s3-us-west-1.amazonaws.com/streamlinevideo/createdistribution1.png)
 
 ...and click the blue “Create Distribution.” button.
 
 Now click on your distribution and click “Distribution Settings”
 
-![distributions](https://s3-us-west-2.amazonaws.com/hellavision/image14.png)
+![distributions](https://s3-us-west-1.amazonaws.com/streamlinevideo/image14.png)
 
 Now click on “behaviors” then click the blue "Create behavior" button.
 
-![behaviors](https://s3-us-west-2.amazonaws.com/hellavision/m3u8caching.png)
+![behaviors](https://s3-us-west-1.amazonaws.com/streamlinevideo/m3u8caching.png)
 
 Make the “Push Pattern” *.m3u8. Hit “Customize” next to “Object Caching.” Then, change the "Maximum TTL" and "Default TTL" to 1. This means that the manifest won’t be cached in the system longer than 1 second. If we don’t do this, we will get stale manifests. That would work for on demand video, but, now for HLS where we have to keep pulling down the manifest down so we don't want this to be cached for too long. Scroll to the bottom and hit the blue “Create” button.
 
