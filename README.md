@@ -148,7 +148,7 @@ Notice how this calls out each resolution, bitrate, and codecs for each stream l
 
 ## Getting the hardware
 
-[Here is a parts list on Amazon of what I used to build my encoder.](http://a.co/hFlRzQi) It’s a bit overkill, but it leaves room to grow.
+[Here is a parts list on Amazon of what I used to build my encoder.](http://a.co/68LVXQe) It’s a bit overkill, but it leaves room to grow.
 
 With the current setup, an NVIDIA GPU is required. I used a quadro which is not artificially limited by NVIDIA to two encodes at at time. I’m thinking of trying to get away with only two encodes so you can use a geforce, but I haven’t tested that yet. I am however doing all the scaling on the GPU, freeing up more cycles for the CPU, but I don’t know if they limit scaling or not on a geforce. In the future I might get a slower GPU and get a threadripper CPU to do more encoding on the CPU for better quality. There are tons of configurations you can do, this is just a reference of something that worked and has room to grow. You can put it in smaller form factors, use an intel chip, whatever if you want.
 
