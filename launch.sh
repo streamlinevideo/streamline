@@ -11,7 +11,7 @@ if [ "$1" == "-h" ]; then
   exit 0
 fi
 
-ffmpeg >/dev/null 2>&1 || { echo "ffmpeg is required for launching the encoder. Aborting." >&2; exit 1; }
+command -v ffmpeg >/dev/null 2>&1 || { echo "ffmpeg is required for launching the encoder. Aborting." >&2; exit 1; }
 
 # Get the name of the capture card
 
