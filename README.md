@@ -222,7 +222,7 @@ On the next screen where it says "Step 7: Review Instance Launch" go ahead and h
 
 Next a dialogue will ask you to “Select an existing key pair or create a new key pair.” You will want to “Create a new key pair” and name it. I’ll call it “myawesomekey.” Hit "Download Key Pair" to download the key. 
 
-![key](https://s3-us-west-1.amazonaws.com/streamlinevideo/key2.png)
+![key](https://s3-us-west-1.amazonaws.com/streamlinevideo/myawesomekey.png)
 
 Now hit the blue "Launch Instances" button. Now hit “view instances”.
 
