@@ -6,18 +6,11 @@ sudo apt-get -y update
 
 sudo apt-get -y upgrade
 
-
 # Download capture card drivers and SDK
 
 wget https://hellavision.s3-us-west-2.amazonaws.com/Blackmagic_Desktop_Video_Linux_10.9.10.tar.gz
 
 wget https://hellavision.s3-us-west-2.amazonaws.com/Blackmagic_DeckLink_SDK_10.9.10.zip
-
-# Download NVIDIA SDK
-
-#wget https://s3-us-west-1.amazonaws.com/rocketbear/Video_Codec_SDK_8.0.14.zip
-
-#wget http://developer.download.nvidia.com/compute/nvenc/v5.0/nvenc_5.0.1_sdk.zip
 
 # Install dependencies
 
