@@ -339,7 +339,7 @@ FFMPEG’s output will log to...
 
 	~/streamline/logs/encode.log
 
-If you find your streaming dieing or rebuffering, watch the logs in real time. It should update at regular intervals to give you info. If you see the FPS below real time, or things running slower than 1x, your computer or your internet connection is not fast enough. It should look something like... “speed=   1x” if it’s running correctly, meaning, in’s able to compress and stream out the video as fast as it’s coming in. This is most likely your bandwidth not being fast enough on the uplink.
+If you find your streaming dying or rebuffering, watch the logs in real time. It should update at regular intervals to give you info. If you see the FPS below real time, or things running slower than 1x, your computer or your internet connection is not fast enough. It should look something like... “speed=   1x” if it’s running correctly, meaning, in’s able to compress and stream out the video as fast as it’s coming in. This is most likely your bandwidth not being fast enough on the uplink.
 
  Run...
 
