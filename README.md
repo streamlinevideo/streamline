@@ -1,3 +1,5 @@
+![streamline](https://s3-us-west-1.amazonaws.com/streamlinevideo/streamline.png)
+
 ## Streamline
 
 Streamline is a reference system design for a premium quality, white label, end to end live streaming system from HDMI / HD-SDI capture all the way to a player on a CDN that works on web, iOS, and Android devices. 
