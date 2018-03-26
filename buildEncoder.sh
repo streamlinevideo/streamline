@@ -26,8 +26,6 @@ nvidia-cuda-toolkit g++-5 libnuma1 libnuma-dev libc6 libc6-dev
 
 unzip -n *.zip
 
-#sudo cp nvenc_5.0.1_sdk/Samples/common/inc/* /usr/include/
-
 sudo cp -vr Video_Codec_SDK_8.0.14/Samples/common/inc/GL/* /usr/include/GL/
 
 sudo cp -vr Video_Codec_SDK_8.0.14/Samples/common/inc/*.h /usr/include/
