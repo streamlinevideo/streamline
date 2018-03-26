@@ -383,7 +383,3 @@ If you see a command line there, it’s running.
  
 - Thank you Lei Zhang for your help on the input detection and ongoing work on LHLS.
 - Thank you to Matt McClcure for asking me to do a talk at the SF video meetup, which eventually spawned this monstrosity. 
-
-## License
-
-TBD
