@@ -376,6 +376,7 @@ If you see a command line there, it’s running.
  - Allow for redundant encoders / internet connections.
  - Maybe make a cheaper intel-only version with hardware encoding.
  - Add some animations that make it easier to understand.
+ - We would love an open-source LHLS client to go with the LHLS support we’re adding (Hint, hint).
  - Refine hardware choices to be no more expensive than necessary. Gaming cards are able to do 2x NVENC encodes, where quadros are unlimited. However, we might be able to get away with one if we eliminate 1440p on the 4k encode. Hopefully it is not limited in how many scalers it can run at one time.
 
 ## Acknowledgements
