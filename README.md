@@ -160,7 +160,9 @@ After ordering your parts, put it together like a normal DIY PC.
 
 Does the PC have a WiFi module in it? Rip it out! If it’s there, someone might be stupid enough to try using WiFi for high bitrate live video streaming. Obviously, this would not be a good idea. ;) Ethernet cables are your friend.
 
-Next, install [Ubuntu Desktop 16.04 LTS 64 bit.](https://www.ubuntu.com/download/desktop/thank-you?country=US&version=16.04.4&architecture=amd64) To do this you will create a bootable USB stick to install the OS on your newly assembled encoder. You can follow the directions [here.](https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-ubuntu) Feel free to skip the boxes that are asking if you want to install drivers or download updates.
+Next, install [Ubuntu Desktop 18.04 LTS 64 bit.](http://releases.ubuntu.com/18.04/) To do this you will create a bootable USB stick to install the OS on your newly assembled encoder. You can follow the directions [here.](https://tutorials.ubuntu.com/tutorial/tutorial-create-a-usb-stick-on-ubuntu) Feel free to skip the boxes that are asking if you want to install drivers or download updates.
+
+Note that the screen shots in this readme are from 16.04 but everything should be roughly the same and 18.04 has been tested. I'll update the screenshots in the future.
 
 Once you have installed and rebooted, log in, then open up the program “terminal.” Now run the command...
  
@@ -280,7 +282,7 @@ Then click under Web “Get Started”
 
 ![get started](https://s3-us-west-1.amazonaws.com/streamlinevideo/image6.png)
 
-Under origin domain name, put the URL of your origin server. Earlier my exmaple was “ec2-54-183-60-162.us-west-1.compute.amazonaws.com” You will also want to enable CORS to work on any domain (or your specific one), if you want to embed this on a third party website. To do that add a header under "Header Name" called "Access-Control-Allow-Origin" and give it a value of "*".
+Under origin domain name, put the URL of your origin server. Earlier my example was “ec2-54-183-60-162.us-west-1.compute.amazonaws.com” You will also want to enable CORS to work on any domain (or your specific one), if you want to embed this on a third party website. To do that add a header under "Header Name" called "Access-Control-Allow-Origin" and give it a value of "*".
 
 ![Create Distribution 0](https://s3-us-west-1.amazonaws.com/streamlinevideo/createdistribution0.png)
 
