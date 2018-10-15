@@ -170,7 +170,7 @@ Once you have installed and rebooted, log in, then open up the program “termin
 
 Now you can clone the repository to get the scripts for this project.
 
-	cd ~/ && git clone https://github.com/colleenkhenry/streamline.git 
+	cd ~/ && git clone https://github.com/streamlinevideo/streamline.git 
 
 Now lets execute the build script. This script will download all of the drivers you need for the NVIDIA GPU and Black Magic DeckLink capture card, as well as correctly compile FFmpeg for you with support for all the codecs and hardware that we need.
 
@@ -252,7 +252,7 @@ Cool, now you are SSHed into your origin server.
 
 Now go ahead and clone this respository to get the build ...
 
-	git clone https://github.com/colleenkhenry/streamline.git && cd ~/streamline && ./buildServer.sh
+	git clone https://github.com/streamlinevideo/streamline.git && cd ~/streamline && ./buildServer.sh
 
 At some point this will pop up. Just hit enter. 
 
