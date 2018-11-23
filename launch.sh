@@ -174,7 +174,7 @@ then
     -map '[5out]' -c:v:4 ${nvenc} -g 50 -b:v:4 3300k \
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 50 -b:v:6 12000k \
-    -map '[8out]' -c:v:7 ${nvenc} -b:v:7 20000k \
+    -map '[8out]' -c:v:7 ${nvenc} -g 50 -b:v:7 20000k \
     -c:a:0 aac -b:a 128k -map 0:a \
     ${hlsargs} \
     -var_stream_map "a:0,agroup:teh_audio \
