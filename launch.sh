@@ -382,54 +382,19 @@ ffmpeg \
 
 fi
 
-# Create a web page with embedded hls.js player.
-
-cat > /tmp/${vid}.html <<_PAGE_
-<!doctype html>
-<html>
-   <head></head>
-   <body>
-      <style>
-         body {
-         background-color : black;
-         margin : 0;
-         }
-         video {
-         left: 50%;
-         position: absolute;
-         top: 50%;
-         transform: translate(-50%, -50%);
-         width: 100%;
-         max-height: 100%;
-         }
-      </style>
-      <script src="//cdn.jsdelivr.net/npm/hls.js@latest"></script>
-      <video id="video" controls autoplay></video>
-      <script>
-         var video = document.getElementById('video');
-         if(navigator.userAgent.match(/(iPhone|iPod|iPad)/i)) {
-         video.src = '${vid}.m3u8';
-         video.autoplay = true;
-          }
-          else if(Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource('${vid}.m3u8');
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED,function() {
-              video.play();
-          });
-         }
-      </script>
-   </body>
-</html>
-_PAGE_
-
-# Upload the player over HTTP PUT to the origin server
-
-curl -X PUT --upload-file /tmp/${vid}.html http://${1}/${vid}.html -H "Content-Type: text/html; charset=utf-8"
+# Copy our client code (that we need to host) or out hosting directory. Copy
+# all the dependencies first, then copy the html.
+#
+# TODO: Add infrastructure that will inline the css and js into the HTML so
+#       that there will only be one asset to request. As part of this we will
+#       want to transpile for better browser compatibility and minmize the js
+#       to limit banwidth demands.
+curl -X PUT --upload-file ./client/main.css http://${1}/main.css     -H "Content-Type: text/html; charset=utf-8"
+curl -X PUT --upload-file ./client/main.js http://${1}/main.js       -H "Content-Type: text/javascript; charset=utf-8"
+curl -X PUT --upload-file ./client/index.html http://${1}/index.html -H "Content-Type: text/css; charset=utf-8"
 
 echo ...and awaaaaayyyyy we go! 🚀🚀🚀🚀
 
 echo Input detected on ${device} as ${res} ${fps}
 
-echo Currently streaming to: https://${2}/${vid}.html
+echo Currently streaming to: https://${2}/index.html/?video=${vid}.m3u8
