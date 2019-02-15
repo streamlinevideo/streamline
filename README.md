@@ -8,7 +8,7 @@ Using commodity computer hardware, free software, and AWS, it’s an affordable 
 
 This project is primarily designed as a learning tool for people to learn how live video works end to end. It is meant to be as simple to understand as possible while still providing great visual quality and streaming performance. It’s not meant for production use as it hasn’t been heavily tested over long periods of time and there are many hard coded parameters. It also may just simply stop working at any time since I’m using the master branch of FFmpeg. Maybe in the next version iteration I’ll freeze to that, which will help, but that’s not out yet.
 
-Processing on this sytem is a hybrid of GPU and CPU.
+Processing on this system is a hybrid of GPU and CPU.
 
 ## What is this not?
 
@@ -39,13 +39,13 @@ It's also not a production ready tool. I wouldn't like, use this in production. 
 
 ## Project approach
 
-Since this is meant primarily as a teaching tool, we're going be "showing our work" a lot, and, favoring simple to understand implementations over absolute ease of use though automation.
+Since this is meant primarily as a teaching tool, we're going to be "showing our work" a lot, and, favoring simple to understand implementations over absolute ease of use through automation.
 
 There are many architectures that can be used to build an end to end live streaming system. We have chosen one that provides better quality, is easy to understand, and has low server side costs. The tradeoff here is that it does require a faster connection from the encoder to the internet and requires more powerful hardware on site.
 
-Additionally, we are not a production tool like OBS or Wirecast, meaning no video switching or compositing is provided. This is designed for higher end productions where you would use dedicated hardware for that purpouse, like an ATEM switcher from Blackmagic.
+Additionally, we are not a production tool like OBS or Wirecast, meaning no video switching or compositing is provided. This is designed for higher end productions where you would use dedicated hardware for that purpose, like an ATEM switcher from Blackmagic.
 
-We have not tried to address all possible hardware or trying to co-exist with a multi function system. We are targeting specific hardware with a dedicated software stack, giving us the most control for reliablity as the project matures.
+We have not tried to address all possible hardware or trying to co-exist with a multi function system. We are targeting specific hardware with a dedicated software stack, giving us the most control for reliability as the project matures.
 
 ## Parts of the system
 
@@ -55,7 +55,7 @@ We have not tried to address all possible hardware or trying to co-exist with a 
 
 **Encoder -** A desktop PC with an NVIDIA Quadro GPU and Blackmagic Capture Card. The encoder is running FFMPEG which will take the raw video and audio from the capture card, and compress it. It will then multiplex it into mpeg-ts, and send it via HTTP PUT to a web server, as well as send up a manifest. It will continue to send new manifests as they are needed, and it will send HTTP DELETE requests on the old segments. I’ll provide a parts list for this, but, you can vary the hardware to some extend, such as building it as a rack mount server.
 
-**Origin server -** This will be the web server will host the segments of video that come in, so that clients can pull them now. We will be using the software “Caddy Server” for this use case. It will receive HTTP PUTs of segments from the encoder.
+**Origin server -** This will be the web server that will host the segments of video that come in, so that clients can pull them now. We will be using the software “Caddy Server” for this use case. It will receive HTTP PUTs of segments from the encoder.
 
 **CDN -** Between the clients and the origin server, will be a network of caching servers all over the world, called edge servers, to scale out how many people can watch at once and improve their viewing experience. We will use Amazon’s CloudFront CDN for this.
 
@@ -65,7 +65,7 @@ We have not tried to address all possible hardware or trying to co-exist with a 
 
 ## How does streaming work?
 
-Lets start off by talking about how live streaming works. As a disclaimer, I’m going to be explaining HLS. HLS is a very common live streaming protocol, which allows for high quality and adaptive bitrate, at scale, on publicly available content delivery networks. Is HLS the best protocol? No, it has issues like very high latency, often around 15 seconds, and that it is controlled by Apple. However, it is common, simple to understand, there are many tools for it, and with the right approach can work pretty much everywhere. There are many ways to implement HLS, and I’m going to describe a very basic one. I can’t cover every rule of HLS here, so if you want to know more check out the HLS spec on Apple’s developer website. I’ll cover things like live and ABR, but I will skip things like DVR, or going live to VOD, etc. If want to know more about the lower level details of how video works, check out [this link](https://developer.apple.com/streaming/) 
+Lets start off by talking about how live streaming works. As a disclaimer, I’m going to be explaining HLS. HLS is a very common live streaming protocol, which allows for high quality and adaptive bitrate, at scale, on publicly available content delivery networks. Is HLS the best protocol? No, it has issues like very high latency, often around 15 seconds, and that it is controlled by Apple. However, it is common, simple to understand, there are many tools for it, and with the right approach can work pretty much everywhere. There are many ways to implement HLS, and I’m going to describe a very basic one. I can’t cover every rule of HLS here, so if you want to know more check out the HLS spec on Apple’s developer website. I’ll cover things like live and ABR, but I will skip things like DVR, or going live to VOD, etc. If want to know more about the lower level details of how video works, check out [this link](https://developer.apple.com/streaming/).
 
 While we would imagine a more complex production typically, the simplest source to imagine is a camera with HDMI or SDI output. You would plug this camera into your “encoder” which will take the raw uncompressed video and audio, compress each source, package it into segments, and send it to a server hosted in AWS EC2. Each segment is typically one second to ten seconds long, depending on your goals and use cases. Contained within each segment is a stream of H.264 compressed video data, and AAC compressed audio data. These two streams are multiplexed together with a “container” which in this use case is mpeg-ts (transport stream). 
 
@@ -110,7 +110,7 @@ Eventually you will reach the max number of segments in your manifest (which is 
 	#EXTINF:2.000000,
 	1435_15.ts
 
-On the client, there will be what's called a "player." This is software that reads the manifest, and will keep pulling down it down regularly looking for new segments. As it sees new segments, it will pull them down too and feed them into the player one after another, like a playlist of songs. The player will seamlessly go from one to the next as they come down. It will also make decisions such as what bitrate to select so that it does not rebuffer.
+On the client, there will be what's called a "player." This is software that reads the manifest, and will keep pulling it down regularly looking for new segments. As it sees new segments, it will pull them down too and feed them into the player one after another, like a playlist of songs. The player will seamlessly go from one to the next as they come down. It will also make decisions such as what bitrate to select so that it does not rebuffer.
 
 One important part of streaming, is bitrate adaptation. Some people will be on a cell phone, some will be on a fast wifi connection at home on a laptop. It’s important to provide the best quality experience given the variations in the speeds of different connections. To that end, we create multiple streams at different bitrates simultaneously, and a “variant playlist” which is a manifest that lists the location of the manifests for each bitrate stream. If you provide this variant playlist to a player, it can then decide which is the maximum quality for it’s connection in real time and adapt to that. 
 
@@ -216,7 +216,7 @@ Now select your instance type. This is how fast your instance is and its resourc
 
 ![instance type](https://s3-us-west-1.amazonaws.com/streamlinevideo/instancetype.png)
 
-Now hit on the upper right "6. Configure Security Group" From here you can enable port 80 to the world, this is the port from which our CDN will be pulling our HTTP streams. Hit “Add Rule” then make a make the type "HTTP" to port open on 80 from the source of “Anywhere.” Then hit "Review and Launch" on the lower right hand corner.
+Now hit on the upper right "6. Configure Security Group" From here you can enable port 80 to the world, this is the port from which our CDN will be pulling our HTTP streams. Hit “Add Rule” then make the type "HTTP" to port open on 80 from the source of “Anywhere.” Then hit "Review and Launch" on the lower right hand corner.
 
 ![network acls](https://s3-us-west-1.amazonaws.com/streamlinevideo/acls.png)
 
@@ -250,7 +250,7 @@ An example looks like
 
 Cool, now you are SSHed into your origin server. 
 
-Now go ahead and clone this respository to get the build ...
+Now go ahead and clone this repository to get the build ...
 
 	git clone https://github.com/streamlinevideo/streamline.git && cd ~/streamline && ./buildServer.sh
 
@@ -302,13 +302,13 @@ Now click on “behaviors” then click the blue "Create behavior" button.
 
 Make the “Push Pattern” *.m3u8. Hit “Customize” next to “Object Caching.” Then, change the "Maximum TTL" and "Default TTL" to 1. This means that the manifest won’t be cached in the system longer than 1 second. If we don’t do this, we will get stale manifests. That would work for on demand video, but, now for HLS where we have to keep pulling down the manifest down so we don't want this to be cached for too long. Scroll to the bottom and hit the blue “Create” button.
 
-If you go back do your distributions you can see the status of your distribution, and you can see the domain name. Please copy that domain name. 
+If you go back to your distributions you can see the status of your distribution, and you can see the domain name. Please copy that domain name. 
 
 You will have to wait for the Status of the distribution to go from “In Progress” to “ready” before you can use it. When it’s “ready” you are about ready to stream!
 
 Now you can take that URL and go back to your encoder. You can SSH into it if you like and control it remotely. An example I had was d1043ohasfxsrx.cloudfront.net. Yours will look something similar.
 
-Now go back to the terminal of your encoder. You can also feel free to SSH into the encoder from the computer you are controling AWS from to make copying and pasting easier, an open-ssh server is now running. Once you are there go into the streamline directory...
+Now go back to the terminal of your encoder. You can also feel free to SSH into the encoder from the computer you are controlling AWS from to make copying and pasting easier, an open-ssh server is now running. Once you are there go into the streamline directory...
 
 	cd ~/streamline 
 
@@ -325,7 +325,7 @@ The command line will return something like
 	Input detected on DeckLink Mini Recorder 4K as 1080 59.94
 	Currently streaming to: https://d1043ohasfxsrx.cloudfront.net/1014.html
 
-If you go to this URL in your web browser you can now see your live video. 🔥🔥🔥 The encode script also creates an HTML page with an embedded hls.js player and uploads it along with the video stream. The hls.js player will pull down all of the segments and put them into the media source apis in the client's web browser in real time as they are added to the manifest. For iOS, we will use the <video> tag function in the browser, since they do not have media source APIs, but do nativley support HLS. This fallback will happen automatically.
+If you go to this URL in your web browser you can now see your live video. 🔥🔥🔥 The encode script also creates an HTML page with an embedded hls.js player and uploads it along with the video stream. The hls.js player will pull down all of the segments and put them into the media source apis in the client's web browser in real time as they are added to the manifest. For iOS, we will use the <video> tag function in the browser, since they do not have media source APIs, but do natively support HLS. This fallback will happen automatically.
 
 Every video will get a unique four digit ID based on the time it was created, which will be used in the naming of the page, the manifest, and the segments. This gives them all unique names so that the caches in the CDN do not serve up stale segments.
 
@@ -333,17 +333,17 @@ To kill the encoder run...
 
 	./kill.sh
 
-This setup will result in HTTPS delivery, but, without further configuration you are relatively insecure as there is currently no authentication set up. If people find your origin server URL, they can use your platform. Also the video between the encoder and the server is unencrypted. I’ll leave that for people to figure out on their own for now :). The software supports SSL on the upload, if you get yourself a domain name and figureo ut how to configure it. Check out route53 and the caddy server documentation for more.
+This setup will result in HTTPS delivery, but, without further configuration you are relatively insecure as there is currently no authentication set up. If people find your origin server URL, they can use your platform. Also the video between the encoder and the server is unencrypted. I’ll leave that for people to figure out on their own for now :). The software supports SSL on the upload, if you get yourself a domain name and figure out how to configure it. Check out route53 and the caddy server documentation for more.
 
 ## Things to know
 
-There is no security in this configuration. Other people could stream using this sytem if you don't lock it down. One way to lock it down is to configure the network security such that you can only do HTTP PUTs from a specific static IP to an upload port, which would be the IP of your encoder. You would want to use a different port to allow the CloudFront CDN to pull from it. We may add directions for this in the future.
+There is no security in this configuration. Other people could stream using this system if you don't lock it down. One way to lock it down is to configure the network security such that you can only do HTTP PUTs from a specific static IP to an upload port, which would be the IP of your encoder. You would want to use a different port to allow the CloudFront CDN to pull from it. We may add directions for this in the future.
 
 FFMPEG’s output will log to...
 
 	~/streamline/logs/encode.log
 
-If you find your streaming dying or rebuffering, watch the logs in real time. It should update at regular intervals to give you info. If you see the FPS below real time, or things running slower than 1x, your computer or your internet connection is not fast enough. It should look something like... “speed=   1x” if it’s running correctly, meaning, in’s able to compress and stream out the video as fast as it’s coming in. This is most likely your bandwidth not being fast enough on the uplink.
+If you find your streaming dying or rebuffering, watch the logs in real time. It should update at regular intervals to give you info. If you see the FPS below real time, or things running slower than 1x, your computer or your internet connection is not fast enough. It should look something like... “speed=   1x” if it’s running correctly, meaning, it's able to compress and stream out the video as fast as it’s coming in. This is most likely your bandwidth not being fast enough on the uplink.
 
  Run...
 
@@ -368,10 +368,10 @@ If you see a command line there, it’s running.
 
 ## Cool future work / Areas you can contribute / TODOs
 
-- Remove any dependancies that are vestigal.
+- Remove any dependencies that are vestigial.
 - Burn in test over time.
  - Create a config for NGINX or Apache which works as well as Caddy, so all of sever install can be scripted, and can be used outside of a personal license.
- - Add some sort of speed test so that you know what your connection can handle rather than rebuffering if the pixel rate is too agressive.
+ - Add some sort of speed test so that you know what your connection can handle rather than rebuffering if the pixel rate is too aggressive.
  - Create a way to remove old HTML files cleanly. 
  - Create an embed code setup. 
  - Move to a fixed version of FFmpeg when a stable branch comes out.
@@ -386,4 +386,4 @@ If you see a command line there, it’s running.
 ## Acknowledgements
  
 - Thank you Lei Zhang for your help on the input detection and ongoing work on LHLS.
-- Thank you to Matt McClcure for asking me to do a talk at the SF video meetup, which eventually spawned this monstrosity. 
+- Thank you to Matt McClure for asking me to do a talk at the SF video meetup, which eventually spawned this monstrosity. 
