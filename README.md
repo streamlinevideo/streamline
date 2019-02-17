@@ -300,7 +300,7 @@ Now click on “behaviors” then click the blue "Create behavior" button.
 
 ![behaviors](https://s3-us-west-1.amazonaws.com/streamlinevideo/m3u8caching.png)
 
-Make the “Push Pattern” *.m3u8. Hit “Customize” next to “Object Caching.” Then, change the "Maximum TTL" and "Default TTL" to 1. This means that the manifest won’t be cached in the system longer than 1 second. If we don’t do this, we will get stale manifests. That would work for on demand video, but, now for HLS where we have to keep pulling down the manifest down so we don't want this to be cached for too long. Scroll to the bottom and hit the blue “Create” button.
+Make the “Push Pattern” *.m3u8. Hit “Customize” next to “Object Caching.” Then, change the "Maximum TTL" and "Default TTL" to 1. This means that the manifest won’t be cached in the system longer than 1 second. If we don’t do this, we will get stale manifests. That would work for on demand video, but, not for live HLS where we have to keep pulling down the manifest down. Therefore, we don't want this to be cached for too long. Scroll to the bottom and hit the blue “Create” button.
 
 If you go back to your distributions you can see the status of your distribution, and you can see the domain name. Please copy that domain name. 
 
