@@ -1,23 +1,23 @@
 #!/bin/bash
 
-# Upgrade the OS
+# install go repo
 
-sudo apt-get -y update && sudo apt-get -y upgrade
+sudo add-apt-repository -y ppa:longsleep/golang-backports
 
-# Make a directory to write from and read from for the caddy server
+# update the OS
 
-mkdir /home/ubuntu/streamline/www
+sudo apt-get -y update
 
-# Make it writable
+sudo apt-get -y upgrade
 
-sudo chmod 775 /home/ubuntu/streamline/www
+sudo apt-get install golang-go
 
-# Create cron jobs that remove old video manifests or segments after one minute after creation.
-# Playlists will be pushed in constantly including the variant playlist, so, they should be unaffected unless stale.
+go/bin/go get -d -v .
 
-(crontab -l 2>/dev/null; echo "*  *  *   *  * find /home/ubuntu/streamline/www/*.ts -mmin +1 -print0 | xargs -0 rm -r") | crontab -
-(crontab -l 2>/dev/null; echo "*  *  *   *  * find /home/ubuntu/streamline/www/*.m4s -mmin +1 -print0 | xargs -0 rm -r") | crontab -
+go/bin/go build
 
-# Provide the command needed to set up the caddy server. (personal license)
+go/bin/go get -d -v .
 
-echo "Please run: curl https://getcaddy.com | bash -s personal hook.service,http.cors,http.upload"
+go/bin/go build
+
+sudo apt-get install nginx
