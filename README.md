@@ -10,6 +10,8 @@ We also add simultaneous creation of MPEG-DASH streaming alongside HLS. You can 
 
 TODOs
 
-Before moving this to the main line branch we will also likely switch away from Caddy server to NGINX or Apache to simplify setup and remove the need for a "personal" license. We will alow experiment with using our low latency server demo software with chunked transfer ingest but normal style egress for higher latency streams. 
+Run through install a few times and polish up any issues. 
 
-We may add another URL to a non-abr low-latency stream as an option. Low Latency ABR in DASH.js isn't working perfectly at the moment, but, for some applications you might be willign to give up ABR for latency.
+Make the low latency server auto run at boot. 
+
+Clean up the low latency player page. 
