@@ -44,8 +44,6 @@ sudo dpkg -i Blackmagic_Desktop_Video_Linux_*/deb/x86_64/*
 
 sudo cp -r Blackmagic_DeckLink_SDK_*/Examples/Linux/bin/x86_64/* /bin/
 
-rm -r -f FFmpeg
-
 git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
 
 cd nv-codec-headers
@@ -57,6 +55,8 @@ sudo make install
 cd ..
 
 # Download and compile FFmpeg
+
+rm -r -f FFmpeg
 
 git clone https://github.com/FFmpeg/FFmpeg.git -b master
 
@@ -79,8 +79,7 @@ sed -i '38,39d' libavutil/cuda_check.h
   --enable-libnpp \
   --enable-cuda-sdk \
   --enable-nvenc \
-  --disable-doc \
-  --diable-htmlpages
+  --disable-doc
 
 # Build ffmpeg
 
@@ -96,12 +95,12 @@ mkdir logs www
 
 # Build the low latency web server
 
-go/bin/go get -d -v .
+go get -d -v .
 
-go/bin/go build
+go build
 
-go/bin/go get -d -v .
+go get -d -v .
 
-go/bin/go build
+go build
 
 echo "You are good to reboot now."
