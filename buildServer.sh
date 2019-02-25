@@ -12,12 +12,12 @@ sudo apt-get -y upgrade
 
 sudo apt-get install golang-go
 
-go/bin/go get -d -v .
+go get -d -v .
 
-go/bin/go build
+go build
 
-go/bin/go get -d -v .
+go get -d -v .
 
-go/bin/go build
+go build
 
 sudo apt-get install nginx

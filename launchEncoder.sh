@@ -123,7 +123,7 @@ then
     [2]hwupload_cuda,scale_npp=-1:360:interp_algo=lanczos,hwdownload[2out]; \
     [3]hwupload_cuda,scale_npp=-1:432:interp_algo=lanczos,hwdownload[3out]; \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
-    [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos[5out]; \
+    [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos,hwdownload[5out]; \
     [6]hwupload_cuda,scale_npp=-1:1080:interp_algo=lanczos[6out]; \
     [7]null[7out]" \
     -map '[1out]' -c:v:0 ${x264enc} -g 60 -b:v:0 400k \
@@ -132,7 +132,7 @@ then
     -map '[4out]' -c:v:3 ${x264enc} -g 60 -b:v:3 2200k \
     -map '[5out]' -c:v:4 ${x264enc} -g 60 -b:v:4 3300k \
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 6000k \
-    -map '[7out]' -c:v:6 ${nvenc} -g 60 -b:v:6 12000k \
+    -map '[7out]' -c:v:6 ${nvenc} -g 60 -b:v:6 10000k \
     -c:a:0 aac -b:a 128k -map 0:a \
     -f dash \
     -streaming 1 \
@@ -166,7 +166,7 @@ then
     [2]hwupload_cuda,scale_npp=-1:360:interp_algo=lanczos,hwdownload[2out]; \
     [3]hwupload_cuda,scale_npp=-1:432:interp_algo=lanczos,hwdownload[3out]; \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
-    [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos[5out]; \
+    [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos,hwdownload[5out]; \
     [6]hwupload_cuda,scale_npp=-1:1080:interp_algo=lanczos[6out]; \
     [7]null[7out]" \
     -map '[1out]' -c:v:0 ${x264enc} -g 50 -b:v:0 400k \
