@@ -96,10 +96,6 @@ f_code=$(echo ${array4[0]}| cut -d' ' -f 1)
 
 roundedfps=$(echo ${fps} | awk '{printf("%d\n",$1 + 0.99)}')
 
-# Encoding settings for x264 (CPU based encoder)
-
-x264enc='libx264 -profile:v high -bf 3 -refs 3 -sc_threshold 0'
-
 # Encoding settings for nvenc (GPU based encoder)
 
 nvenc='h264_nvenc -profile:v high -bf 3 -refs 3 -preset medium -spatial-aq 1 -temporal-aq 1 -rc-lookahead 25'
@@ -122,11 +118,11 @@ then
     [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos,hwdownload[5out]; \
     [6]hwupload_cuda,scale_npp=-1:1080:interp_algo=lanczos[6out]; \
     [7]null[7out]" \
-    -map '[1out]' -c:v:0 ${x264enc} -g 60 -b:v:0 400k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 60 -b:v:1 800k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 60 -b:v:2 1100k \
-    -map '[4out]' -c:v:3 ${x264enc} -g 60 -b:v:3 2200k \
-    -map '[5out]' -c:v:4 ${x264enc} -g 60 -b:v:4 3300k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 60 -b:v:0 400k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 60 -b:v:1 800k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 60 -b:v:2 1100k \
+    -map '[4out]' -c:v:3 ${nvenc} -g 60 -b:v:3 2200k \
+    -map '[5out]' -c:v:4 ${nvenc} -g 60 -b:v:4 3300k \
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 60 -b:v:6 10000k \
     -c:a:0 aac -b:a 128k -map 0:a \
@@ -165,11 +161,11 @@ then
     [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos,hwdownload[5out]; \
     [6]hwupload_cuda,scale_npp=-1:1080:interp_algo=lanczos[6out]; \
     [7]null[7out]" \
-    -map '[1out]' -c:v:0 ${x264enc} -g 50 -b:v:0 400k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 50 -b:v:1 800k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 50 -b:v:2 1100k \
-    -map '[4out]' -c:v:3 ${x264enc} -g 50 -b:v:3 2200k \
-    -map '[5out]' -c:v:4 ${x264enc} -g 50 -b:v:4 3300k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 50 -b:v:0 400k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 50 -b:v:1 800k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 50 -b:v:2 1100k \
+    -map '[4out]' -c:v:3 ${nvenc} -g 50 -b:v:3 2200k \
+    -map '[5out]' -c:v:4 ${nvenc} -g 50 -b:v:4 3300k \
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 50 -b:v:6 12000k \
     -c:a:0 aac -b:a 128k -map 0:a \
@@ -206,10 +202,10 @@ ffmpeg \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
     [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos[5out]; \
     [6]null[6out]" \
-    -map '[1out]' -c:v:0 ${x264enc} -g 120 -b:v:0 800k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 120 -b:v:1 1600k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 120 -b:v:2 2200k \
-    -map '[4out]' -c:v:3 ${x264enc} -g 120 -b:v:3 4400k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 120 -b:v:0 800k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 120 -b:v:1 1600k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 120 -b:v:2 2200k \
+    -map '[4out]' -c:v:3 ${nvenc} -g 120 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 120 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 120 -b:v:5 12000k \
     -c:a:0 aac -b:a 128k -map 0:a \
@@ -246,12 +242,12 @@ ffmpeg \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
     [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos[5out]; \
     [6]null[6out]" \
-    -map '[1out]' -c:v:0 ${x264enc} -g 100 -b:v:0 800k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 100 -b:v:1 1600k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 100 -b:v:2 2200k \
-    -map '[4out]' -c:v:3 ${x264enc} -g 100 -b:v:3 4400k \
-    -map '[5out]' -c:v:4 ${x264enc} -g 100 -b:v:4 6600k \
-    -map '[6out]' -c:v:5 ${x264enc} -g 100 -b:v:5 12000k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 100 -b:v:0 800k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 100 -b:v:1 1600k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 100 -b:v:2 2200k \
+    -map '[4out]' -c:v:3 ${nvenc} -g 100 -b:v:3 4400k \
+    -map '[5out]' -c:v:4 ${nvenc} -g 100 -b:v:4 6600k \
+    -map '[6out]' -c:v:5 ${nvenc} -g 100 -b:v:5 12000k \
     -c:a:0 aac -b:a 128k -map 0:a \
     -f dash \
     -streaming 1 \
@@ -286,10 +282,10 @@ ffmpeg \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
     [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos[5out]; \
     [6]null[6out]" \
-    -map '[1out]' -c:v:0 ${x264enc} -g 60 -b:v:0 800k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 60 -b:v:1 1600k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 60 -b:v:2 2200k \
-    -map '[4out]' -c:v:3 ${x264enc} -g 60 -b:v:3 4400k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 60 -b:v:0 800k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 60 -b:v:1 1600k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 60 -b:v:2 2200k \
+    -map '[4out]' -c:v:3 ${nvenc} -g 60 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 60 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 12000k \
     -c:a:0 aac -b:a 128k -map a:0 \
@@ -326,10 +322,10 @@ ffmpeg \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
     [5]hwupload_cuda,scale_npp=-1:720:interp_algo=lanczos[5out]; \
     [6]null[6out]" \
-    -map '[1out]' -c:v:0 ${x264enc} -g 50 -b:v:0 800k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 50 -b:v:1 1600k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 50 -b:v:2 2200k \
-    -map '[4out]' -c:v:3 ${x264enc} -g 50 -b:v:3 4400k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 50 -b:v:0 800k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 50 -b:v:1 1600k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 50 -b:v:2 2200k \
+    -map '[4out]' -c:v:3 ${nvenc} -g 50 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 50 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 12000k \
     -c:a:0 aac -b:a 128k -map 0:a \
@@ -365,9 +361,9 @@ ffmpeg \
     [3]hwupload_cuda,scale_npp=-1:432:interp_algo=lanczos,hwdownload[3out]; \
     [4]hwupload_cuda,scale_npp=-1:540[4out]; \
     [5]null[5out]; \
-    -map '[1out]' -c:v:0 ${x264enc} -g 120 -b:v:0 800k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 120 -b:v:1 1600k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 120 -b:v:2 2200k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 120 -b:v:0 800k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 120 -b:v:1 1600k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 120 -b:v:2 2200k \
     -map '[4out]' -c:v:3 ${nvenc} -g 120 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 120 -b:v:4 6600k \
     -c:a:0 aac -b:a 128k -map 0:a \
@@ -403,9 +399,9 @@ ffmpeg \
     [3]hwupload_cuda,scale_npp=-1:432:interp_algo=lanczos,hwdownload[3out]; \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=lanczos,hwdownload[4out]; \
     [5]null[5out]; \
-    -map '[1out]' -c:v:0 ${x264enc} -g 100 -b:v:0 800k \
-    -map '[2out]' -c:v:1 ${x264enc} -g 100 -b:v:1 1600k \
-    -map '[3out]' -c:v:2 ${x264enc} -g 100 -b:v:2 2200k \
+    -map '[1out]' -c:v:0 ${nvenc} -g 100 -b:v:0 800k \
+    -map '[2out]' -c:v:1 ${nvenc} -g 100 -b:v:1 1600k \
+    -map '[3out]' -c:v:2 ${nvenc} -g 100 -b:v:2 2200k \
     -map '[4out]' -c:v:3 ${nvenc} -g 100 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 100 -b:v:4 6600k \
     -c:a:0 aac -b:a 128k -map 0:a \

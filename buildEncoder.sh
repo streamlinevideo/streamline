@@ -17,7 +17,7 @@ sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda
 sudo apt-get -y update
 
 sudo apt-get install -y cuda-libraries-10-0 gcc nasm autoconf htop net-tools libpango1.0-0 libpangox-1.0-0 \
-automake build-essential openssh-server texinfo zlibc net-tools curl golang-go \
+automake build-essential openssh-server texinfo zlibc net-tools curl golang-go cuda-nvcc-10-1 \
 yasm unzip libssl-dev libx264-dev dkms pkg-config nvidia-cuda-toolkit nginx
 
 wget https://download.nvidia.com/XFree86/Linux-x86_64/418.30/NVIDIA-Linux-x86_64-418.30.run
@@ -62,8 +62,6 @@ git clone https://github.com/FFmpeg/FFmpeg.git -b master
 
 cd FFmpeg
 
-sed -i '38,39d' libavutil/cuda_check.h
-
 #  Configure FFmpeg build
 
 ./configure \
@@ -88,6 +86,10 @@ make
 sudo make install
 
 cd ..
+
+sudo ./patch.sh
+
+rm patch.sh
 
 rm -r -f Blackmagic* nv* NVIDIA* *bz2 *.run *.deb* *.xz*
 
