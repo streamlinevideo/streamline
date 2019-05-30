@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Create a video ID form the time thes scipt is executed
@@ -15,8 +16,7 @@ command -v ffmpeg >/dev/null 2>&1 || { echo "ffmpeg is required for launching th
 
 # Get the name of the capture card
 
-ffmpeg -hide_banner -f decklink -list_devices 1  \
--i dummy &> .tmp.txt
+ffmpeg -hide_banner -f decklink -list_devices 1  -i dummy &> .tmp.txt
 sed -i '1d' .tmp.txt
 output=$(<.tmp.txt)
 
@@ -96,25 +96,19 @@ f_code=$(echo ${array4[0]}| cut -d' ' -f 1)
 
 roundedfps=$(echo ${fps} | awk '{printf("%d\n",$1 + 0.99)}')
 
-# HLS parameters that create 2 second segments, delete old segment, transmit over a persistent connetion using HTTP PUT, re-send a variant playlist every 15 seconds.
-
-hlsargs="-f hls -hls_time 2 -hls_flags delete_segments -method PUT -http_persistent 1 -master_pl_publish_rate 15 -master_pl_name ${vid}.m3u8  -master_pl_publish_rate 30"
-
 # Encoding settings for x264 (CPU based encoder)
 
 x264enc='libx264 -profile:v high -bf 4 -refs 3 -sc_threshold 0'
 
 # Encoding settings for nvenc (GPU based encoder)
 
-nvenc='h264_nvenc -profile:v high -bf 4 -refs 3 -rc vbr_hq'
+nvenc='h264_nvenc -profile:v high -bf 4 -refs 3 -preset:v medium -strict_gop 1 -spatial-aq 1 -temporal-aq 1 -rc-lookahead 25'
 
 # If the input is 4k then encode with 4k encoding settings
 
 if [ "${res}" == "2160" ] || [ "${roundedfps}" == "30" ]
 then
     ffmpeg \
-    -hide_banner \
-    -queue_size 4294967296 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -135,26 +129,25 @@ then
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 60 -b:v:6 12000k \
     -map '[8out]' -c:v:7 ${nvenc} -g 60 -b:v:7 20000k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    v:5,agroup:teh_audio \
-    v:6,agroup:teh_audio \
-    v:7,agroup:teh_audio" \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 4k then encode with 4k encoding settings
 
 elif [ "${res}" == "2160" ] || [ "${roundedfps}" == "25" ]
 then
     ffmpeg \
-    -hide_banner \
-    -queue_size 4294967296 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -175,25 +168,25 @@ then
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 50 -b:v:6 12000k \
     -map '[8out]' -c:v:7 ${nvenc} -g 50 -b:v:7 20000k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    v:5,agroup:teh_audio \
-    v:6,agroup:teh_audio \
-    v:7,agroup:teh_audio" \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 1080p59.94 or 1080p60, then encode with 1080p60 ABR encoding settings.
 
 elif [ "${res}" == "1080" ] || [ "${roundedfps}" == "60" ]
 then
 ffmpeg \
-    -hide_banner \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -210,23 +203,25 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 120 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 120 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 120 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    v:5,agroup:teh_audio" \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 1080p50, then encode with 1080p50 ABR encoding settings.
 
 elif [ "${res}" == "1080" ] || [ "${fps}" == "50" ]
 then
 ffmpeg \
-    -hide_banner \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -243,23 +238,25 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 100 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 100 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 100 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    v:5,agroup:teh_audio" \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 1080i59.94, deinterlace it, then encode with 1080p30 ABR encoding settings.
 
 elif [[ "${res}" == "1080i59.94" ]]
 then
 ffmpeg \
-    -hide_banner \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -277,22 +274,24 @@ ffmpeg \
     -map '[5out]' -c:v:4 ${nvenc} -g 60 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 12000k \
     -c:a:0 aac -b:a 128k -map a:0 \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    v:5,agroup:teh_audio" \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 1080i50, then deinterlace and encode with 1080p25 ABR encoding settings.
 
 elif [[ "${res}" == "1080i50" ]]
 then
 ffmpeg \
-    -hide_banner \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -309,23 +308,25 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 50 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 50 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    v:5,agroup:teh_audio" \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 720p60, then encode with 720p60 ABR encoding settings.
 
 elif [[ "${res}" == "720p" ]]  || [ "${roundedfps}" == "60" ]
 then
 ffmpeg \
-    -hide_banner \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -340,22 +341,25 @@ ffmpeg \
     -map '[3out]' -c:v:2 ${x264enc} -g 120 -b:v:2 2200k \
     -map '[4out]' -c:v:3 ${x264enc} -g 120 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 120 -b:v:4 6600k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 720p50, then encode with 720p50 ABR encoding settings.
 
 elif [[ "${res}" == "720p" ]]  || [ "${roundedfps}" == "50" ]
 then
 ffmpeg \
-    -hide_banner \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -371,65 +375,18 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 100 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 100 -b:v:4 6600k \
     -c:a:0 aac -b:a 128k -map 0:a \
-    ${hlsargs} \
-    -var_stream_map "a:0,agroup:teh_audio \
-    v:0,agroup:teh_audio \
-    v:1,agroup:teh_audio \
-    v:2,agroup:teh_audio \
-    v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
-    http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
+    -c:a:0 aac -b:a 128k -map a:0 \
+    -f dash \
+    -use_timeline 1 \
+    -use_template 1 \
+    -seg_duration 1 \
+    -method PUT \
+    -http_persistent 1 \
+    -streaming 1 \
+    -remove_at_exit 1 \
+    -window_size 5 \
+    -hls_playlist 1 \
+    -adaptation_sets "id=0,streams=v id=1,streams=a" \
+    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
 
 fi
-
-# Create a web page with embedded hls.js player.
-
-cat > /tmp/${vid}.html <<_PAGE_
-<!doctype html>
-<html>
-   <head></head>
-   <body>
-      <style>
-         body {
-         background-color : black;
-         margin : 0;
-         }
-         video {
-         left: 50%;
-         position: absolute;
-         top: 50%;
-         transform: translate(-50%, -50%);
-         width: 100%;
-         max-height: 100%;
-         }
-      </style>
-      <script src="//cdn.jsdelivr.net/npm/hls.js@latest"></script>
-      <video id="video" controls autoplay></video>
-      <script>
-         var video = document.getElementById('video');
-         if(navigator.userAgent.match(/(iPhone|iPod|iPad)/i)) {
-         video.src = '${vid}.m3u8';
-         video.autoplay = true;
-          }
-          else if(Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource('${vid}.m3u8');
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED,function() {
-              video.play();
-          });
-         }
-      </script>
-   </body>
-</html>
-_PAGE_
-
-# Upload the player over HTTP PUT to the origin server
-
-curl -X PUT --upload-file /tmp/${vid}.html http://${1}/${vid}.html -H "Content-Type: text/html; charset=utf-8"
-
-echo ...and awaaaaayyyyy we go! 🚀🚀🚀🚀
-
-echo Input detected on ${device} as ${res} ${fps}
-
-echo Currently streaming to: https://${2}/${vid}.html
