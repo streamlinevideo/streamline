@@ -1,0 +1,2 @@
+Encoder time      
+%{localtime:%M}:%{localtime:%S }:%{eif:1M*t-1K*trunc(t*1K):d}
