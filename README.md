@@ -269,7 +269,7 @@ Now you are SSHed into your origin server.
 
 Now go ahead and clone this repository to get the build...
 
-	git clone https://github.com/streamlinevideo/streamline.git && cd  && ./buildServer.sh
+	git clone https://github.com/streamlinevideo/streamline.git && cd streamline && ./buildServer.sh
 
 Your origin server is now running.
 
@@ -314,13 +314,8 @@ You will have to wait for the Status of the distribution to go from “In Progre
 
 Now you can take that URL and go back to your encoder. You can SSH into it if you like and control it remotely. An example I had was d1043ohasfxsrx.cloudfront.net. Yours will look something similar.
 
-Now go back to the terminal of your encoder. You can also feel free to SSH into the encoder from the computer you are controlling AWS from to make copying and pasting easier, an open-ssh server is now running. Once you are there go into the streamline directory...
+Now go back to the terminal of your encoder. You are now all ready to launch your stream! Run the launchEncoder.sh script and put URL of your origin server as the first argument, and the url to your CloudFront distribution as the second argument. Make sure not to add http:// or https:// to the hostnames.
 
-	cd 
-
-You are now all ready to launch your stream! Run the launchEncoder.sh script and put URL of your origin server as the first argument, and the url to your CloudFront distribution as the second argument. Make sure not to add http:// or https:// to the hostnames.
-
-Run...
 
 	./launchEncoder.sh ec2-54-183-60-162.us-west-1.compute.amazonaws.com d1043ohasfxsrx.cloudfront.net
 
