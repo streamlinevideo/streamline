@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Create a video ID form the time thes scipt is executed
@@ -6,7 +5,6 @@
 vid=$(date '+%M%S')
 
 # Print help if requested
-
 if [ "$1" == "-h" ]; then
   echo "Usage: `basename $0` ./launch.sh originserverurl urltocdn"
   exit 0
@@ -15,7 +13,6 @@ fi
 command -v ffmpeg >/dev/null 2>&1 || { echo "ffmpeg is required for launching the encoder. Aborting." >&2; exit 1; }
 
 # Get the name of the capture card
-
 ffmpeg -hide_banner -f decklink -list_devices 1  -i dummy &> .tmp.txt
 sed -i '1d' .tmp.txt
 output=$(<.tmp.txt)
@@ -23,7 +20,6 @@ output=$(<.tmp.txt)
 IFS="'" read _ device _ <<< "$output"
 
 # Get the input format from the capture card
-
 echo -ne '\n' | StatusMonitor > .format.txt
 output=$(<.format.txt)
 while read -r line
@@ -45,9 +41,7 @@ res=${array[0]}
 fps=${array[1]}
 
 # Get video format list from the input card
-
 ffmpeg -f decklink  -list_formats 1 -i "$device" &> .tmp.txt
-
 output=$(<.tmp.txt)
 min_fps=1000
 while read -r line
@@ -100,15 +94,16 @@ roundedfps=$(echo ${fps} | awk '{printf("%d\n",$1 + 0.99)}')
 
 x264enc='libx264 -profile:v high -bf 4 -refs 3 -sc_threshold 0'
 
-# Encoding settings for nvenc (GPU based encoder)
+# Encoding settings for NVENC (GPU based encoder)
 
 nvenc='h264_nvenc -profile:v high -bf 4 -refs 3 -preset:v medium -strict_gop 1 -spatial-aq 1 -temporal-aq 1 -rc-lookahead 25'
 
 # If the input is 4k then encode with 4k encoding settings
-
 if [ "${res}" == "2160" ] || [ "${roundedfps}" == "30" ]
 then
     ffmpeg \
+    -format_code 4k30 \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -129,19 +124,22 @@ then
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 60 -b:v:6 12000k \
     -map '[8out]' -c:v:7 ${nvenc} -g 60 -b:v:7 20000k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 4k then encode with 4k encoding settings
 
@@ -168,22 +166,24 @@ then
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 6000k \
     -map '[7out]' -c:v:6 ${nvenc} -g 50 -b:v:6 12000k \
     -map '[8out]' -c:v:7 ${nvenc} -g 50 -b:v:7 20000k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 1080p59.94 or 1080p60, then encode with 1080p60 ABR encoding settings.
-
 elif [ "${res}" == "1080" ] || [ "${roundedfps}" == "60" ]
 then
 ffmpeg \
@@ -203,22 +203,25 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 120 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 120 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 120 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+    http://${1}:8080/ldash/streamline/manifest.mpd
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 1080p50, then encode with 1080p50 ABR encoding settings.
-
 elif [ "${res}" == "1080" ] || [ "${fps}" == "50" ]
 then
 ffmpeg \
@@ -238,22 +241,24 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 100 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 100 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 100 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 1080i59.94, deinterlace it, then encode with 1080p30 ABR encoding settings.
-
 elif [[ "${res}" == "1080i59.94" ]]
 then
 ffmpeg \
@@ -273,22 +278,24 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 60 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 60 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 60 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 1080i50, then deinterlace and encode with 1080p25 ABR encoding settings.
-
 elif [[ "${res}" == "1080i50" ]]
 then
 ffmpeg \
@@ -308,22 +315,24 @@ ffmpeg \
     -map '[4out]' -c:v:3 ${x264enc} -g 50 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 50 -b:v:4 6600k \
     -map '[6out]' -c:v:5 ${nvenc} -g 50 -b:v:5 12000k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 720p60, then encode with 720p60 ABR encoding settings.
-
 elif [[ "${res}" == "720p" ]]  || [ "${roundedfps}" == "60" ]
 then
 ffmpeg \
@@ -341,22 +350,24 @@ ffmpeg \
     -map '[3out]' -c:v:2 ${x264enc} -g 120 -b:v:2 2200k \
     -map '[4out]' -c:v:3 ${x264enc} -g 120 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 120 -b:v:4 6600k \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 
 # If the input is 720p50, then encode with 720p50 ABR encoding settings.
-
 elif [[ "${res}" == "720p" ]]  || [ "${roundedfps}" == "50" ]
 then
 ffmpeg \
@@ -374,19 +385,20 @@ ffmpeg \
     -map '[3out]' -c:v:2 ${x264enc} -g 100 -b:v:2 2200k \
     -map '[4out]' -c:v:3 ${x264enc} -g 100 -b:v:3 4400k \
     -map '[5out]' -c:v:4 ${nvenc} -g 100 -b:v:4 6600k \
-    -c:a:0 aac -b:a 128k -map 0:a \
-    -c:a:0 aac -b:a 128k -map a:0 \
+    -c:a:0 aac -b:a 128k \
     -f dash \
-    -use_timeline 1 \
-    -use_template 1 \
-    -seg_duration 1 \
+    -use_timeline 0 \
+    -index_correction 1 \
+    -seg_duration 2 \
     -method PUT \
     -http_persistent 1 \
     -streaming 1 \
     -remove_at_exit 1 \
     -window_size 5 \
+    -extra_window_size 10 \
     -hls_playlist 1 \
+    -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/${vid}/manifest.mpd >/dev/null 2>~/streamline/logs/encode.log &
-
+#http://${1}:8080/ldash/${vid}/manifest.mpd
+#>/dev/null 2>logs/encode.log &
 fi

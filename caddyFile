@@ -1,7 +1,0 @@
-:80
-
-root /home/ubuntu/streamline/www
-
-upload / {
-     to "/home/ubuntu/streamline/www/"
-}
