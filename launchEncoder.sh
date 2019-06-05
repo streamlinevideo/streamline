@@ -60,7 +60,6 @@ do
     fi
 
     # Calculate fps
-
     IFS='/' read -r -a array3 <<< "${array[2]}"
     DIV=$(echo "scale=2; ${array3[0]}/${array3[1]}" | bc)
 
@@ -138,14 +137,13 @@ then
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 4k then encode with 4k encoding settings
-
 elif [ "${res}" == "2160" ] || [ "${roundedfps}" == "25" ]
 then
     ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -180,13 +178,13 @@ then
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 1080p59.94 or 1080p60, then encode with 1080p60 ABR encoding settings.
 elif [ "${res}" == "1080" ] || [ "${roundedfps}" == "60" ]
 then
 ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -217,14 +215,13 @@ ffmpeg \
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-    http://${1}:8080/ldash/streamline/manifest.mpd
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 1080p50, then encode with 1080p50 ABR encoding settings.
 elif [ "${res}" == "1080" ] || [ "${fps}" == "50" ]
 then
 ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -255,13 +252,13 @@ ffmpeg \
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 1080i59.94, deinterlace it, then encode with 1080p30 ABR encoding settings.
 elif [[ "${res}" == "1080i59.94" ]]
 then
 ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -292,13 +289,13 @@ ffmpeg \
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 1080i50, then deinterlace and encode with 1080p25 ABR encoding settings.
 elif [[ "${res}" == "1080i50" ]]
 then
 ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -329,13 +326,13 @@ ffmpeg \
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 720p60, then encode with 720p60 ABR encoding settings.
 elif [[ "${res}" == "720p" ]]  || [ "${roundedfps}" == "60" ]
 then
 ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -364,13 +361,13 @@ ffmpeg \
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 
 # If the input is 720p50, then encode with 720p50 ABR encoding settings.
 elif [[ "${res}" == "720p" ]]  || [ "${roundedfps}" == "50" ]
 then
 ffmpeg \
+    -draw_bars 1 \
     -f decklink \
     -i "$device" \
     -filter_complex \
@@ -399,6 +396,50 @@ ffmpeg \
     -hls_playlist 1 \
     -utc_timing_url "https://time.akamai.com/?iso" \
     -adaptation_sets "id=0,streams=v id=1,streams=a" \
-#http://${1}:8080/ldash/${vid}/manifest.mpd
-#>/dev/null 2>logs/encode.log &
+    http://${1}/ldash/${vid}/manifest.mpd >/dev/null 2>logs/encode.log &
 fi
+
+cat > /tmp/${vid}.html <<_PAGE_
+<!doctype html>
+<html>
+   <head></head>
+   <body>
+      <style>
+         body {
+         background-color : black;
+         margin : 0;
+         }
+         video {
+         left: 50%;
+         position: absolute;
+         top: 50%;
+         transform: translate(-50%, -50%);
+         width: 100%;
+         max-height: 100%;
+         }
+      </style>
+      <script src="//cdn.jsdelivr.net/npm/hls.js@latest"></script>
+      <video id="video" controls autoplay></video>
+      <script>
+         var video = document.getElementById('video');
+         if(navigator.userAgent.match(/(iPhone|iPod|iPad)/i)) {
+         video.src = 'master.m3u8';
+         video.autoplay = true;
+          }
+          else if(Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource('master.m3u8');
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED,function() {
+              video.play();
+          });
+         }
+      </script>
+   </body>
+</html>
+_PAGE_
+
+# Upload the player over HTTP PUT to the origin server
+curl -X PUT --upload-file /tmp/${vid}.html  http://${1}/ldash/${vid}/index.html -H "Content-Type: text/html; charset=utf-8"
+
+echo "http://${1}/ldash/${vid}/index.html"

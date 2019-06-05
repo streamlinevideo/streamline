@@ -80,7 +80,11 @@ In this version of streamline, we are also supporting MPEG DASH. The principals 
 
 There are many ways to implement HLS, and I’m going to describe a very basic one. I can’t cover every rule of HLS here, so if you want to know more check out the HLS spec on Apple’s developer website. I’ll cover things like live and ABR, but I will skip things like DVR, or going live to VOD, etc. If want to know more about the lower level details of how video works, check out [this link](https://developer.apple.com/streaming/).
 
-While we would imagine a more complex production typically, the simplest source to imagine is a camera with HDMI or SDI output. You would plug this camera into your “encoder” which will take the raw uncompressed video and audio, compress each source, package it into segments, and send it to a server hosted in AWS EC2. Each segment is typically one second to ten seconds long, depending on your goals and use cases. Contained within each segment is a stream of H.264 compressed video data, and AAC compressed audio data. These two streams are multiplexed together with a “container” which in this use case is fragmented .m4s. HLS previosuly required .ts but now supports both .m4s and .ts, allowing for segments to be shared between DASH and HLS streams.
+<<<<<<< HEAD
+While we would imagine a more complex production typically, the simplest source to imagine is a camera with HDMI or SDI output. You would plug this camera into your “encoder” which will take the raw uncompressed video and audio, compress each source, package it into segments, and send it to a server hosted in AWS EC2. Each segment is typically one second to ten seconds long, depending on your goals and use cases. Contained within each segment is a stream of H.264 compressed video data, and AAC compressed audio data. These two streams are multiplexed together with a “container” which in this use case is fragmented .mp4. HLS previosuly required .ts but now supports both .mp4 and .ts, allowing for segments to be shared between DASH and HLS streams.
+=======
+While we would imagine a more complex production typically, the simplest source to imagine is a camera with HDMI or SDI output. You would plug this camera into your “encoder” which will take the raw uncompressed video and audio, compress each source, package it into segments, and send it to a server hosted in AWS EC2. Each segment is typically one second to ten seconds long, depending on your goals and use cases. Contained within each segment is a stream of H.264 compressed video data, and AAC compressed audio data. These two streams are multiplexed together with a “container” which in this use case is fragmented .mp4. HLS previosuly required .ts but now supports both .mp4 and .ts, allowing for segments to be shared between DASH and HLS streams.
+>>>>>>> 7c01d1aba42262c6f4dce41b55c83e3bf539c7af
 
 When a segment is created, it is added to a manifest. A manifest in HLS is a .m3u8 file. Its a text file which contains the URLs for all of the segments. It would look something like “playlist.m3u8” and if you were to open it with a text editor, it’s fully human readable.
 
@@ -91,7 +95,11 @@ If you have only one segment (because you just started) your manifest would look
 	#EXT-X-TARGETDURATION:2
 	#EXT-X-MEDIA-SEQUENCE:0
 	#EXTINF:2.000000,
-	1435_10.m4s
+<<<<<<< HEAD
+	1435_10.mp4
+=======
+	1435_10.mp4
+>>>>>>> 7c01d1aba42262c6f4dce41b55c83e3bf539c7af
 
 If you have three segments it would look like...
 
@@ -100,11 +108,19 @@ If you have three segments it would look like...
 	#EXT-X-TARGETDURATION:2
 	#EXT-X-MEDIA-SEQUENCE:0
 	#EXTINF:2.000000,
-	1435_10.m4s
+<<<<<<< HEAD
+	1435_10.mp4
 	#EXTINF:2.000000,
-	1435_11.m4s
+	1435_11.mp4
 	#EXTINF:2.000000,
-	1435_12.m4s
+	1435_12.mp4
+=======
+	1435_10.mp4
+	#EXTINF:2.000000,
+	1435_11.mp4
+	#EXTINF:2.000000,
+	1435_12.mp4
+>>>>>>> 7c01d1aba42262c6f4dce41b55c83e3bf539c7af
 
 Eventually you will reach the max number of segments in your manifest (which is configurable). At that point you would start removing old segments while you add new ones. Thus, you have a rolling window. It’s like a caterpillar track, as you lay down new segments you pick up old ones by deleting them. Note that segment 0 is now gone.
 
@@ -113,15 +129,27 @@ Eventually you will reach the max number of segments in your manifest (which is 
 	#EXT-X-TARGETDURATION:2
 	#EXT-X-MEDIA-SEQUENCE:1
 	#EXTINF:2.000000,
-	1435_11.m4s
+<<<<<<< HEAD
+	1435_11.mp4
 	#EXTINF:2.000000,
-	1435_12.m4s
+	1435_12.mp4
 	#EXTINF:2.000000,
-	1435_13.m4s
+	1435_13.mp4
 	#EXTINF:2.000000,
-	1435_14.m4s
+	1435_14.mp4
 	#EXTINF:2.000000,
-	1435_15.m4s
+	1435_15.mp4
+=======
+	1435_11.mp4
+	#EXTINF:2.000000,
+	1435_12.mp4
+	#EXTINF:2.000000,
+	1435_13.mp4
+	#EXTINF:2.000000,
+	1435_14.mp4
+	#EXTINF:2.000000,
+	1435_15.mp4
+>>>>>>> 7c01d1aba42262c6f4dce41b55c83e3bf539c7af
 
 On the client, there will be what's called a "player." This is software that reads the manifest, and will keep pulling it down regularly looking for new segments. As it sees new segments, it will pull them down too and feed them into the player one after another, like a playlist of songs. The player will seamlessly go from one to the next as they come down. It will also make decisions such as what bitrate to select so that it does not rebuffer.
 
