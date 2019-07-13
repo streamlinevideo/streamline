@@ -258,11 +258,11 @@ At some point this will pop up. Just hit enter.
 
 ![grub](https://s3-us-west-1.amazonaws.com/streamlinevideo/grub.png)
 
-After the script is done, you will want to go ahead and download your caddy server. Go to caddyserver.com/download and choose the “Platform” to be “Linux 64-bit” and add the plugins http.cors and http.upload. I’m going to assume that you are using this all for personal use, so please go ahead and select the personal license. If you are using this for Commercial stuff (please go ahead and use the commercial license workflow.) If you want to use server that is free for commercial use, but slightly harder to configure, but has no cost, please check out NGINX or Apache. You will need to Google how to allow HTTP PUT uploads. Caddy is nice because it’s so simple, and, if you need, it does HTTPS configuration for you super quickly.
+After the script is done, you will want to go ahead and download your caddy server. Go to caddyserver.com/download and choose the “Platform” to be “Linux 64-bit” and add the plugins http.cors and http.webdav. I’m going to assume that you are using this all for personal use, so please go ahead and select the personal license. If you are using this for Commercial stuff (please go ahead and use the commercial license workflow.) If you want to use server that is free for commercial use, but slightly harder to configure, but has no cost, please check out NGINX or Apache. You will need to Google how to allow HTTP PUT uploads. Caddy is nice because it’s so simple, and, if you need, it does HTTPS configuration for you super quickly.
 
 After you’ve selected your options, copy the “One-step installer script (bash):” command line into your terminal where you are SSHed into your server. This will look like.
 
-	curl https://getcaddy.com | bash -s personal hook.service,http.cors,http.upload
+	curl https://getcaddy.com | bash -s personal hook.service,http.cors,http.webdav
 
 Paste this command into your terminal, and hit enter. Note that this is a personal license. Make sure this fits your use case before using it. 
 

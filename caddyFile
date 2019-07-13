@@ -2,6 +2,9 @@
 
 root /home/ubuntu/streamline/www
 
-upload / {
-     to "/home/ubuntu/streamline/www/"
+webdav  {
+    scope       /home/ubuntu/streamline/www
+    modify      true
+    allow       /home/ubuntu/streamline/www
 }
+
