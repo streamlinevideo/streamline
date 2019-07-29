@@ -98,7 +98,7 @@ roundedfps=$(echo ${fps} | awk '{printf("%d\n",$1 + 0.99)}')
 
 # HLS parameters that create 2 second segments, delete old segment, transmit over a persistent connetion using HTTP PUT, re-send a variant playlist every 15 seconds.
 
-hlsargs="-f hls -hls_time 2 -hls_flags delete_segments -method PUT -http_persistent 1 -master_pl_publish_rate 15 -master_pl_name ${vid}.m3u8  -master_pl_publish_rate 30"
+hlsargs="-f hls -hls_time 2 -hls_flags delete_segments -method PUT -http_persistent 1 -master_pl_publish_rate 15 -master_pl_name ${vid}.m3u8"
 
 # Encoding settings for x264 (CPU based encoder)
 
