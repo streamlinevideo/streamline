@@ -166,7 +166,7 @@ Note that the screen shots in this readme are from 16.04 but everything should b
 
 Once you have installed and rebooted, log in, then open up the program “terminal.” Now run the command...
  
-	sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y install git
+	sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install git
 
 Now you can clone the repository to get the scripts for this project.
 
