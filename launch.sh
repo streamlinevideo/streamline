@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Create a video ID form the time thes scipt is executed
+# Create a video ID from the time thes scipt is executed
 
 vid=$(date '+%M%S')
 
