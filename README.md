@@ -355,6 +355,14 @@ You can see if ffmpeg is running or not by running...
 
 If you see a command line there, it’s running.
 
+## Join the community
+
+We hang out on the video-dev slack chat in #streamline. 
+
+You can join video-dev here! https://video-dev.herokuapp.com/ 
+
+Come hang with us! 2
+
 ## Coming soon
 
  - LHLS playback (pending finding an open source player which can support it, we have a server ready).
