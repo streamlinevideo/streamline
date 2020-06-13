@@ -334,7 +334,7 @@ ffmpeg \
     [2]hwupload_cuda,scale_npp=-1:360:interp_algo=super,hwdownload[2out]; \
     [3]hwupload_cuda,scale_npp=-1:432:interp_algo=super,hwdownload[3out]; \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=super,hwdownload[4out]; \
-    [5]null[5out]; \
+    [5]null[5out]" \
     -map '[1out]' -c:v:0 ${x264enc} -g 120 -b:v:0 800k \
     -map '[2out]' -c:v:1 ${x264enc} -g 120 -b:v:1 1600k \
     -map '[3out]' -c:v:2 ${x264enc} -g 120 -b:v:2 2200k \
@@ -347,7 +347,7 @@ ffmpeg \
     v:1,agroup:teh_audio \
     v:2,agroup:teh_audio \
     v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
+    v:4,agroup:teh_audio" \
     http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
 
 # If the input is 720p50, then encode with 720p50 ABR encoding settings.
@@ -364,7 +364,7 @@ ffmpeg \
     [2]hwupload_cuda,scale_npp=-1:360:interp_algo=super,hwdownload[2out]; \
     [3]hwupload_cuda,scale_npp=-1:432:interp_algo=super,hwdownload[3out]; \
     [4]hwupload_cuda,scale_npp=-1:540:interp_algo=super,hwdownload[4out]; \
-    [5]null[5out]; \
+    [5]null[5out]" \
     -map '[1out]' -c:v:0 ${x264enc} -g 100 -b:v:0 800k \
     -map '[2out]' -c:v:1 ${x264enc} -g 100 -b:v:1 1600k \
     -map '[3out]' -c:v:2 ${x264enc} -g 100 -b:v:2 2200k \
@@ -377,7 +377,7 @@ ffmpeg \
     v:1,agroup:teh_audio \
     v:2,agroup:teh_audio \
     v:3,agroup:teh_audio \
-    v:4,agroup:teh_audio \
+    v:4,agroup:teh_audio" \
     http://${1}/${vid}_%v.m3u8 >/dev/null 2>~/streamline/logs/encode.log &
 
 fi
