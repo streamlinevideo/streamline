@@ -387,40 +387,48 @@ fi
 cat > /tmp/${vid}.html <<_PAGE_
 <!doctype html>
 <html>
-   <head></head>
-   <body>
-      <style>
-         body {
-         background-color : black;
-         margin : 0;
-         }
-         video {
-         left: 50%;
-         position: absolute;
-         top: 50%;
-         transform: translate(-50%, -50%);
-         width: 100%;
-         max-height: 100%;
-         }
-      </style>
-      <script src="//cdn.jsdelivr.net/npm/hls.js@latest"></script>
-      <video id="video" controls autoplay></video>
-      <script>
-         var video = document.getElementById('video');
-         if(navigator.userAgent.match(/(iPhone|iPod|iPad)/i)) {
-         video.src = '${vid}.m3u8';
-         video.autoplay = true;
-          }
-          else if(Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource('${vid}.m3u8');
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED,function() {
-              video.play();
-          });
-         }
-      </script>
-   </body>
+<head></head>
+<body>
+<style>
+    body {
+        background-color : black;
+        margin : 0;
+    }
+</style>
+<button id=play>Play</button>
+<button id=pause disabled>Pause</button>
+
+<script src="ogv/ogv.js"></script>
+<script src="ogv/ogv-support.js"></script>
+<script>
+    var player = new OGVPlayer({ forceWebGL: true });
+    var container = document.createElement('div');
+    container.appendChild(player);
+    document.body.appendChild(container);
+
+    play.addEventListener( 'click', function() {
+        play.disabled = true;
+        player.play();
+    });
+
+    pause.addEventListener( 'click', function() {
+        pause.disabled = true;
+        player.pause();
+    });
+
+    player.src = 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv';
+
+    player.addEventListener('playing', function() {
+        play.disabled = true;
+        pause.disabled = false;
+    });
+
+    player.addEventListener('pause', function() {
+        play.disabled = false;
+        pause.disabled = true;
+    });
+</script>
+</body>
 </html>
 _PAGE_
 
