@@ -407,8 +407,8 @@ cat > /tmp/${vid}.html <<_PAGE_
         z-index:99999;
     }
 </style>
-<video id="videojs-ogvjs-player" class="video-js vjs-default-skin" poster="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv/1920px--Caminandes-_Llama_Drama_-_Short_Movie.ogv.jpg" controls preload="none" width="352" height="264" crossorigin>
-    <source src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv" type='video/ogg; codecs=&quot;theora, vorbis&quot;'>
+<video id="videojs-ogvjs-player" class="video-js vjs-default-skin" controls preload="none" width="352" height="264" crossorigin>
+    <source src="${vid}.ogv" type='video/ogg; codecs=&quot;theora, vorbis&quot;'>
 </video>
 <script src="https://vjs.zencdn.net/5.11.7/video.min.js"></script>
 <script src="ogv/ogv-support.js"></script>
