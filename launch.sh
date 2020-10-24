@@ -387,46 +387,26 @@ fi
 cat > /tmp/${vid}.html <<_PAGE_
 <!doctype html>
 <html>
-<head></head>
+<head>
+    <meta charset="utf-8">
+    <title>videojs-ogvjs Demo</title>
+    <link href="https://vjs.zencdn.net/5.11.7/video-js.min.css" rel="stylesheet">
+</head>
 <body>
-<style>
-    body {
-        background-color : black;
-        margin : 0;
-    }
-</style>
-<button id=play>Play</button>
-<button id=pause disabled>Pause</button>
-
-<script src="ogv/ogv.js"></script>
+<video id="videojs-ogvjs-player" class="video-js vjs-default-skin" poster="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv/1920px--Caminandes-_Llama_Drama_-_Short_Movie.ogv.jpg" controls preload="none" width="352" height="264" crossorigin>
+    <source src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv" type='video/ogg; codecs=&quot;theora, vorbis&quot;'>
+</video>
+<script src="https://vjs.zencdn.net/5.11.7/video.min.js"></script>
 <script src="ogv/ogv-support.js"></script>
+<script src="ogv/ogv.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-ogvjs@1.3.1/dist/videojs-ogvjs.min.js"></script>
 <script>
-    var player = new OGVPlayer({ forceWebGL: true });
-    var container = document.createElement('div');
-    container.appendChild(player);
-    document.body.appendChild(container);
-
-    play.addEventListener( 'click', function() {
-        play.disabled = true;
-        player.play();
-    });
-
-    pause.addEventListener( 'click', function() {
-        pause.disabled = true;
-        player.pause();
-    });
-
-    player.src = 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv';
-
-    player.addEventListener('playing', function() {
-        play.disabled = true;
-        pause.disabled = false;
-    });
-
-    player.addEventListener('pause', function() {
-        play.disabled = false;
-        pause.disabled = true;
-    });
+    (function(window, videojs) {
+        videojs('videojs-ogvjs-player', {
+            techOrder: [ 'ogvjs' ],
+            ogvjs: { base: 'ogv' }
+        } );
+    }(window, window.videojs));
 </script>
 </body>
 </html>
