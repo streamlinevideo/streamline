@@ -393,6 +393,20 @@ cat > /tmp/${vid}.html <<_PAGE_
     <link href="https://vjs.zencdn.net/5.11.7/video-js.min.css" rel="stylesheet">
 </head>
 <body>
+<style>
+    .video-js {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        background-color: black;
+        background-size: cover;
+        z-index:99999;
+    }
+</style>
 <video id="videojs-ogvjs-player" class="video-js vjs-default-skin" poster="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv/1920px--Caminandes-_Llama_Drama_-_Short_Movie.ogv.jpg" controls preload="none" width="352" height="264" crossorigin>
     <source src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Caminandes-_Llama_Drama_-_Short_Movie.ogv" type='video/ogg; codecs=&quot;theora, vorbis&quot;'>
 </video>
