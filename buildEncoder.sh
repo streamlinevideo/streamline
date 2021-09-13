@@ -1,109 +1,119 @@
 #!/bin/bash
 
-# update the OS
+sudo apt-get -y install \
+    openssh-server \
+    screen \
+    pkg-config \
+    nasm \
+    yasm \
+    unzip \
+    curl \
+    axel \
+    autoconf \
+    automake \
+    build-essential \
+    cmake \
+    htop \
+    git-core \
+    libass-dev \
+    libgnutls28-dev \
+    libsdl2-dev \
+    libtool \
+    libvdpau-dev \
+    libssl-dev \
+    dkms \
+    libssh-dev \
+    libxcb1-dev \
+    libxcb-shm0-dev \
+    libxcb-xfixes0-dev \
+    libegl1-mesa \
+    meson \
+    ninja-build \
+    texinfo \
+    libfdk-aac-dev \
+    libx264-dev \
+    libopus-dev \
+    libunistring-dev \
+    libaom-dev \
+    nvidia-driver-470 \
+    nvidia-cuda-toolkit
 
-sudo add-apt-repository -y ppa:graphics-drivers/ppa
+mkdir ~/streamline2
+cd ~/streamline2
 
-sudo apt-get -y update
+#download and install Black Magic SDK
+rm -r bmdsdk/
+axel --no-clobber  https://streamlinevideo.s3.us-west-1.amazonaws.com/Blackmagic_DeckLink_SDK_12.1.zip
+unzip  -n  Blackmagic_DeckLink_SDK_12.1.zip
+mv 'Blackmagic DeckLink SDK 12.1' bmdsdk
 
-sudo apt-get -y upgrade
+#download and install Black Magic Desktop drivers and software
+rm -r bmddv/
+axel --no-clobber https://streamlinevideo.s3.us-west-1.amazonaws.com/Blackmagic_Desktop_Video_Linux_12.1.tar
+tar -xf Blackmagic_Desktop_Video_Linux_12.1.tar
+mv Blackmagic_Desktop_Video_Linux_12.1 bmddv
+sudo dpkg -i  ~/streamline2/bmddv/deb/x86_64/*
 
-# Download capture card drivers and SDK
+#create working directory
+mkdir ~/streamline2/ffmpeg_sources
 
-wget https://hellavision.s3-us-west-2.amazonaws.com/Blackmagic_DeckLink_SDK_10.10.zip
+#install svt-av1
+cd ~/streamline2/ffmpeg_sources
+git -C SVT-AV1 pull 2> /dev/null || git clone https://github.com/AOMediaCodec/SVT-AV1.git
+mkdir -p SVT-AV1/build
+cd SVT-AV1/build
+PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DCMAKE_BUILD_TYPE=Release -DBUILD_DEC=OFF -DBUILD_SHARED_LIBS=OFF ..
+PATH="$HOME/bin:$PATH" make -j 128
 
-wget https://hellavision.s3-us-west-2.amazonaws.com/Blackmagic_Desktop_Video_Linux_10.10.tar
+make install
+#install CUDA SDK
+#echo "Installing CUDA and the latest driver repositories from repositories"
+#wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+#sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+#wget https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb
+#sudo apt-key add /var/cuda-repo-ubuntu2004-11-4-local/7fa2af80.pub
+#sudo dpkg -i cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb
 
-# Install dependencies
-
-sudo apt-get install -y --allow-unauthenticated nasm autoconf htop \
-automake build-essential libass-dev curl zlib1g-dev openssh-server \
-autoconf libfreetype6-dev texinfo zlibc nvidia-390 \
-libsdl2-dev libtool libvdpau-dev libxcb1-dev libxcb-shm0-dev \
-libpango1.0-0 libfdk-aac-dev yasm unzip libxcb-xfixes0-dev texi2html \
-libssl-dev libx264-dev dkms libssh-dev pkg-config \
-nvidia-cuda-toolkit g++-5 libnuma1 libnuma-dev libc6 libc6-dev
-
-# Install NVIDIA GPU SDK
-
-unzip -n *.zip
-
-sudo cp -vr Video_Codec_SDK_8.0.14/Samples/common/inc/GL/* /usr/include/GL/
-
-sudo cp -vr Video_Codec_SDK_8.0.14/Samples/common/inc/*.h /usr/include/
-
-# Install FFmpeg NVIDIA headers
-
+#install NVIDIA  SDK
+echo "Installing the NVIDIA NVENC SDK."
+cd ~/streamline2
 git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
-
-cd ~/streamline/nv-codec-headers
-
-make
-
+cd nv-codec-headers
+make -j 128
 sudo make install
+cd ~/streamline2
 
-cd ~/streamline
-
-# Install Black Magic capture card driver and SDK
-
-unzip -n Blackmagic_DeckLink_SDK_10.10.zip
-
-mv -n 'Blackmagic DeckLink SDK 10.10' Blackmagic_DeckLink_SDK_10.10
-
-tar -xvf Blackmagic_Desktop_Video_Linux_10.10.tar
-
-sudo dpkg -i Blackmagic_Desktop_Video_Linux_10.10/deb/x86_64/*
-
-sudo cp -r Blackmagic_DeckLink_SDK_10.10/Examples/Linux/bin/x86_64/* /bin/
-
-# Download and compile FFmpeg
-
-rm -r -f ~/streamline/FFmpeg/
-
-wget https://ffmpeg.org/releases/ffmpeg-4.0.tar.bz2
-
-tar xvjf ffmpeg-4.0.tar.bz2
-
-cd ffmpeg-4.0
-
-# Configure FFmpeg build
+#compile ffmpeg
+echo "Compiling ffmpeg"
+cd ~/streamline2
+git clone https://github.com/FFmpeg/FFmpeg -b master
+cd FFmpeg
 
 ./configure \
-  --extra-cflags=-I$HOME/streamline/Blackmagic_DeckLink_SDK_10.10/Linux/include \
-  --extra-ldflags=-L-I$HOME/streamline/Blackmagic_DeckLink_SDK_10.10/Linux/include \
-  --extra-cflags=-I/usr/local/cuda/include/ \
-  --extra-ldflags=-L/usr/local/cuda/lib64/ \
+  --extra-cflags="-I$HOME/streamline2/bmdsdk/Linux/include" \
+  --extra-ldflags="-L-I$HOME/streamline2/bmdsdk/Linux/include" \
+  --extra-cflags="-I$HOME/streamline2/ffmpeg_build/include" \
+  --extra-ldflags="-L$HOME/streamline2/ffmpeg_build/lib" \
+  --extra-cflags="-I/usr/local/cuda/include/" \
+  --extra-ldflags="-L/usr/local/cuda/lib64/" \
   --extra-cflags=-I/usr/local/include/ \
   --extra-ldflags=-L/usr/local/include/ \
+  --enable-cuda-nvcc \
+  --enable-cuvid \
+  --enable-libnpp \
   --enable-gpl \
   --enable-libass \
   --enable-libfdk-aac \
+  --enable-libopus \
   --enable-libx264 \
   --enable-nonfree \
-  --enable-openssl \
+  --enable-nvenc \
   --enable-decklink \
-  --enable-libnpp \
-  --enable-cuda-sdk \
-  --enable-libfreetype
+  --enable-libsvtav1
 
-# Build ffmpeg
-
-make
-
-# Install FFmpeg
-
-sudo make -j$(nproc) install
-
-make -j$(nproc) distclean
-
+make -j 128
+sudo make install
+make distclean
 hash -r
 
-# Remove downloads
-
-cd ~/streamline
-
-rm -r -f *.zip *.deb *.tar ffmpeg*
-
-rm -r -f nv-codec-headers *Blackmagic*
-
-echo "You are ready to reboot."
+echo "Complete!"
