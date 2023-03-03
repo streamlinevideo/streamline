@@ -1,4 +1,5 @@
-![streamline](https://s3-us-west-1.amazonaws.com/streamlinevideo/streamline.png)
+![streamline](./logo/streamline_dark_mode.png#gh-dark-mode-only)
+![streamline](./logo/streamline_light_mode.png#gh-light-mode-only)
 
 ## Streamline
 
