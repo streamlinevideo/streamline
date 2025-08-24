@@ -15,7 +15,7 @@ Processing on this system is a hybrid of GPU and CPU.
 
 Streamline is not meant for mobile streaming, it’s meant for streaming from a more professional production with dedicated cameras, microphones, and video switching equipment. Think more “Apple Product Launch” live streaming, not Periscope or Twitch. In fact it’s not designed currently to feed services like YouTube Live, Facebook live, etc, it is meant to be its own end to end platform. The video will work on web browsers on a computer, iOS, or Android.
 
-It's also not a production ready tool. I wouldn't like, use this in production. It might explode. I make no promises that it wont explode on you. Go check out AWS Elemental, Wowza, Bitmovin, Haivision, etc if you want production ready stuff with support that is available. 
+It's also not a production ready tool. I wouldn't like, use this in production. It might explode. I make no promises that it wont explode on you. Go check out AWS Elemental, Momento, Wowza, Bitmovin, Haivision, etc if you want production ready stuff with support that is available. 
 
 ## What is included?
 
